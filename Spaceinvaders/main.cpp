@@ -17,14 +17,19 @@ private:
 	sf::Texture teksturagr;
 	sf::Sprite player;
 	void initgracz();
-	//koniec objektu statku gracza
+	//koniec obiektu statku gracza
 
 	//obiekt pauza
 	sf::Texture teksturapauz;
 	sf::Sprite pauza;
 	void initpauz();
-	//koniec objektu pauza
+	//koniec obiektu pauza
 
+	//obiekt enemy
+	sf::Texture teksturaenem;
+	sf::Sprite enemy;
+	void initenem();
+	//koniec obiektu enemy
 public:
 	//Konstruktor
 	Game() {
@@ -32,6 +37,7 @@ public:
 		this->initWindow(); 
 		this->initgracz();
 		this->initpauz();
+		this->initenem();
 	}
 	//Destruktor - czyszczenie pamiêci po ka¿dej klatce
 	virtual ~Game() {
@@ -67,6 +73,16 @@ void Game::initpauz(){
 	this->pauza.scale(0.1f, 0.1f);
 	this->pauza.setPosition(this->videomode.width - 60, 10);
 }
+void Game::initenem() {
+	if (!teksturaenem.loadFromFile("enemy.png")) {
+		std::cout << "Failed to load image";
+		return;
+	}
+	this->teksturaenem.loadFromFile("enemy.png");
+	this->enemy.setTexture(teksturaenem);
+	this->enemy.scale(0.3f, 0.3f);
+	this->enemy.setPosition( 15, 10);
+}
 
 void Game::initvar() {
 	this->window = nullptr; //zainicjowanie pustego wskaŸnika window (nadanie wartoœci NULL)
@@ -77,7 +93,7 @@ void Game::initWindow() {
 	this->videomode.height = 600;
 	this->videomode.width = 800;
 	//nadanie wskaŸnikowi window rozmiaru okna
-	this->window = new sf::RenderWindow(this->videomode, "game_window", sf::Style::Titlebar | sf::Style::Close);
+	this->window = new sf::RenderWindow(this->videomode, "Ala Space Invaders", sf::Style::Titlebar | sf::Style::Close);
 	this->window->setFramerateLimit(60);
 }
 //end private metody
@@ -109,6 +125,7 @@ void Game::render() {
 	this->window->clear(); //Czyszczenie okna
 	this->window->draw(this->player);
 	this->window->draw(this->pauza);
+	this->window->draw(this->enemy);
 	this->window->display(); //Wyœwietlenie okna
 }
 //koniec klasy Game
