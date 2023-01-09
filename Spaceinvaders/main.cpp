@@ -1,4 +1,4 @@
-//Projekt semestralny gry typu Space Invaders
+//Projekt semestralny gry typu Space Invaders w ramach przedmiotu Informatyka II
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -12,11 +12,26 @@ private:
 
 	void initvar();
 	void initWindow();
+
+	//objekt statku gracza
+	sf::Texture teksturagr;
+	sf::Sprite player;
+	void initgracz();
+	//koniec objektu statku gracza
+
+	//obiekt pauza
+	sf::Texture teksturapauz;
+	sf::Sprite pauza;
+	void initpauz();
+	//koniec objektu pauza
+
 public:
 	//Konstruktor
 	Game() {
 		this->initvar();
-		this->initWindow();
+		this->initWindow(); 
+		this->initgracz();
+		this->initpauz();
 	}
 	//Destruktor - czyszczenie pamiêci po ka¿dej klatce
 	virtual ~Game() {
@@ -32,6 +47,27 @@ public:
 };
 
 //private metody
+void Game::initgracz() {
+	if (!teksturagr.loadFromFile("player.png")) {
+		std::cout << "Failed to load image";
+		return;
+	}
+	this->teksturagr.loadFromFile("player.png");
+	this->player.setTexture(teksturagr);
+	this->player.scale(0.2f, 0.2f);
+	this->player.setPosition(this->videomode.width/2, 500);
+}
+void Game::initpauz(){
+	if (!teksturapauz.loadFromFile("pause-button.png")) {
+		std::cout << "Failed to load image";
+		return;
+	}
+	this->teksturapauz.loadFromFile("pause-button.png");
+	this->pauza.setTexture(teksturapauz);
+	this->pauza.scale(0.1f, 0.1f);
+	this->pauza.setPosition(this->videomode.width - 60, 10);
+}
+
 void Game::initvar() {
 	this->window = nullptr; //zainicjowanie pustego wskaŸnika window (nadanie wartoœci NULL)
 }
@@ -42,12 +78,15 @@ void Game::initWindow() {
 	this->videomode.width = 800;
 	//nadanie wskaŸnikowi window rozmiaru okna
 	this->window = new sf::RenderWindow(this->videomode, "game_window", sf::Style::Titlebar | sf::Style::Close);
+	this->window->setFramerateLimit(60);
 }
 //end private metody
 
 void Game::update() {
-	//Obs³uga updateowania okna
+	//Obs³uga aktualizowania okna (zale¿nie od wydarzeñ)
 	this->updatePollEvents();
+
+	//std::cout << "Mouse pos: " << sf::Mouse::getPosition(*this->window).x <<" " <<sf::Mouse::getPosition(*this->window).y <<"\n";
 }
 
 void Game::updatePollEvents() {
@@ -65,9 +104,11 @@ void Game::updatePollEvents() {
 	}
 }
 
+//rendering okna - wyswietlanie obiektów klatka po klatce
 void Game::render() {
-	this->window->clear(sf::Color(255, 0, 0, 255)); //Czyszczenie okna
-	
+	this->window->clear(); //Czyszczenie okna
+	this->window->draw(this->player);
+	this->window->draw(this->pauza);
 	this->window->display(); //Wyœwietlenie okna
 }
 //koniec klasy Game
