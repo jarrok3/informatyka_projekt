@@ -6,6 +6,7 @@
 #include <SFML/System.hpp>
 #include "Game.h"
 #include "help.h"
+#include "Enemy.h"
 
 int main() {
 

@@ -21,17 +21,16 @@ void Game::initpauz() {
 	this->pauza.setPosition(this->videomode.width - 60, 10);
 }
 void Game::initenem() {
-	if (!teksturaenem.loadFromFile("enemy.png")) {
-		std::cout << "Failed to load enemy image";
-		return;
+	this->enemyText.loadFromFile("enemy.png");
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 3; j++) {
+			enemies.push_back(Enemy(&enemyText, sf::Vector2f(10.f + 70 * i, 10.f + 75 * j)));
+		}
 	}
-	this->teksturaenem.loadFromFile("enemy.png");
-	this->enemy.setTexture(teksturaenem);
-	this->enemy.scale(0.1f, 0.1f); //60x60 to nowy rozmiar
-	this->posenem.x = 20.f;
-	this->posenem.y = 20.f;
-	this->enemy.setPosition(this->posenem);
 }
+
+
 
 void Game::initvar() {
 	this->window = nullptr; //zainicjowanie pustego wskaŸnika window (nadanie wartoœci NULL)
@@ -39,9 +38,7 @@ void Game::initvar() {
 	this->points = 0;
 	this->timer = 0.f;
 	this->maxTimer = 1000.f;
-	this->maxEnemies = 10;
-	this->speedEnemy = 10.f;
-	this->direction = 1;
+	this->directione = 1;
 }
 
 void Game::initWindow() {
@@ -91,38 +88,49 @@ void Game::updatePollEvents() {
 	}
 }
 
+void Game::bounce(std::vector<Enemy>& enemies)
+{
+	/*for (auto& enemy : enemies) {
+		if (enemy.enemySprite.getPosition().x < 0) {
+			enemy.direction = 1;
+			enemy.position.y += 8;
+		}
+		else if (enemy.enemySprite.getPosition().x > 740) {
+			enemy.direction = -1;
+			enemy.position.y += 8;
+		}
+	}*/
+	for (auto& enemy : enemies) {
+		enemy.moveEnemy(&directione);
+		if (enemy.enemySprite.getPosition().x < 0 || enemy.enemySprite.getPosition().x >740) {
+			for (auto& enemy : enemies) {
+				enemy.position.y += 15;
+			}
+			this->directione *= -1;
+		}
+	}
+}
+
 void Game::updateenem()
 {
 	//Updatuje timer dla ruchu enemies
 	if (this->timer >= this->maxTimer)
 	{
 		this->timer = 0.f;
-		this->moveEnemy();
+		for (size_t i = 0; i < enemies.size(); i++) {
+			this->bounce(enemies);
+		}
 	}
 	else
 		this->timer += 250.f;
 	std::cout << this->timer << " timer \n";
 }
 
-void Game::moveEnemy()
-{
-	if (this->enemy.getPosition().x < 0) 
-	{
-		this->direction = 1;
-		this->posenem.y += 25;
-	}
-	else if (this->enemy.getPosition().x > this->videomode.width - 60)
-	{
-		this->direction = -1;
-		this->posenem.y += 25;
-	}
-	this->posenem.x += this->speedEnemy * this->direction;
-	this->enemy.setPosition(this->posenem);
-}
-
 void Game::renderenem()
 {
-	this->window->draw(enemy);
+	for (size_t i = 0; i < enemies.size(); i++) {
+		this->window->draw(enemies[i].enemySprite);
+	}
 }
 
 //rendering okna - wyswietlanie obiektów klatka po klatce

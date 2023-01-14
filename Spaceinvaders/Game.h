@@ -4,6 +4,8 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
+#include "Enemy.h"
+
 class Game
 {
 private:
@@ -14,6 +16,7 @@ private:
 	int points;
 	float timer;
 	float maxTimer;
+	int directione;
 
 	void initvar();
 	void initWindow();
@@ -34,15 +37,11 @@ private:
 	void initpauz();
 	//koniec obiektu pauza
 
-	//obiekt enemy
-	int maxEnemies;
-	sf::Texture teksturaenem;
-	sf::Vector2f posenem;
-	float speedEnemy;
-	sf::Sprite enemy;
-	int direction;
+	//Enemy w klasie game
+	sf::Texture enemyText;
+	std::vector<Enemy> enemies;
 	void initenem();
-	//koniec obiektu enemy
+	void bounce(std::vector<Enemy> &enemies);
 public:
 	//Konstruktor
 	Game() {
