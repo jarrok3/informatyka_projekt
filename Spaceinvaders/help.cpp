@@ -39,5 +39,6 @@ void help::render()
 	this->windowh->clear(); //Czyszczenie okna
 	this->windowh->draw(this->backgr);
 	this->windowh->draw(this->text);
+	this->windowh->draw(this->header);
 	this->windowh->display(); //Wyœwietlenie okna
 }

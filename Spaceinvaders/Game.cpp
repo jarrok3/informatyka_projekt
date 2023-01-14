@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "help.h"
 
 void Game::initgracz() {
 	if (!teksturagr.loadFromFile("player.png")) {
@@ -10,22 +11,13 @@ void Game::initgracz() {
 	this->player.scale(0.2f, 0.2f);
 	this->player.setPosition(this->videomode.width / 2, 500);
 }
-void Game::initpauz() {
-	if (!teksturapauz.loadFromFile("pause-button.png")) {
-		std::cout << "Failed to load pause image";
-		return;
-	}
-	this->teksturapauz.loadFromFile("pause-button.png");
-	this->pauza.setTexture(teksturapauz);
-	this->pauza.scale(0.1f, 0.1f);
-	this->pauza.setPosition(this->videomode.width - 60, 10);
-}
+
 void Game::initenem() {
 	this->enemyText.loadFromFile("enemy.png");
 	for (int i = 0; i < 5; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			enemies.push_back(Enemy(&enemyText, sf::Vector2f(10.f + 70 * i, 10.f + 75 * j)));
+			enemies.push_back(Enemy(&enemyText, sf::Vector2f(10.f + 100 * i, 60.f + 75 * j)));
 		}
 	}
 }
@@ -48,6 +40,12 @@ void Game::initWindow() {
 	//nadanie wskaŸnikowi window rozmiaru okna
 	this->window = new sf::RenderWindow(this->videomode, "Projekt Space Invaders", sf::Style::Titlebar | sf::Style::Close);
 	this->window->setFramerateLimit(60);
+
+	this->font.loadFromFile("retro.ttf");
+	this->helpInGame.setCharacterSize(14);
+	this->helpInGame.setPosition(10, 5);
+	this->helpInGame.setFont(this->font);
+	this->helpInGame.setString("F1 - How To Play");
 }
 void Game::initbackground()
 {
@@ -83,6 +81,20 @@ void Game::updatePollEvents() {
 			{
 				this->window->close();
 			}
+			if (ev.key.code == sf::Keyboard::F1)
+			{
+				help helpWindow;
+				while (helpWindow.isrunning()) {
+
+					//Update okna po zdefiniowaniu event
+
+					helpWindow.updateEvents();
+					//czyszczenie poprzedniej klatki
+
+					helpWindow.render();
+					//Wyœwietlenie okna
+				}
+			}
 			break;
 		}
 	}
@@ -90,16 +102,6 @@ void Game::updatePollEvents() {
 
 void Game::bounce(std::vector<Enemy>& enemies)
 {
-	/*for (auto& enemy : enemies) {
-		if (enemy.enemySprite.getPosition().x < 0) {
-			enemy.direction = 1;
-			enemy.position.y += 8;
-		}
-		else if (enemy.enemySprite.getPosition().x > 740) {
-			enemy.direction = -1;
-			enemy.position.y += 8;
-		}
-	}*/
 	for (auto& enemy : enemies) {
 		enemy.moveEnemy(&directione);
 		if (enemy.enemySprite.getPosition().x < 0 || enemy.enemySprite.getPosition().x >740) {
@@ -138,7 +140,7 @@ void Game::render() {
 	this->window->clear(); //Czyszczenie okna
 	this->window->draw(this->backgr);
 	this->window->draw(this->player);
-	this->window->draw(this->pauza);
+	this->window->draw(this->helpInGame);
 	this->renderenem();
 	this->window->display(); //Wyœwietlenie okna
 }

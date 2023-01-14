@@ -6,6 +6,6 @@ void Enemy::moveEnemy(int *direction) {
 }
 
 void Enemy::updateEnemy() {
-	//moveEnemy();
+
 }
 

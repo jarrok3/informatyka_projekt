@@ -20,7 +20,8 @@ private:
 
 	void initvar();
 	void initWindow();
-
+	
+	//Background
 	sf::Sprite backgr;
 	sf::Texture backgrTexture;
 	void initbackground();
@@ -31,24 +32,21 @@ private:
 	void initgracz();
 	//koniec obiektu statku gracza
 
-	//obiekt pauza
-	sf::Texture teksturapauz;
-	sf::Sprite pauza;
-	void initpauz();
-	//koniec obiektu pauza
-
 	//Enemy w klasie game
 	sf::Texture enemyText;
 	std::vector<Enemy> enemies;
 	void initenem();
 	void bounce(std::vector<Enemy> &enemies);
+	
+	//Tekst pomocny
+	sf::Text helpInGame;
+	sf::Font font;
 public:
 	//Konstruktor
 	Game() {
 		this->initvar();
 		this->initWindow();
 		this->initgracz();
-		this->initpauz();
 		this->initenem();
 		this->initbackground();
 	}

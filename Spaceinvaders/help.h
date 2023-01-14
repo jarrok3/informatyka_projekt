@@ -15,6 +15,8 @@ private:
 	sf::Font font;
 	sf::Text text;
 
+	sf::Text header;
+
 	void initHelp();
 public:
 	//kontruktor okna pomocy
@@ -33,8 +35,12 @@ public:
 	void createText() {
 		font.loadFromFile("retro.ttf");
 
+		header.setFont(font);
+		header.setCharacterSize(50);
+		header.setPosition(325, 100);
+		header.setString("HELP");
 		text.setFont(font);
-		text.setString("This is some text in an existing class that creates a window.");
+		text.setString("Poruszanie po menu: \n  Arrow Up - ruch w gore \n  Arrow Down - ruch w dol \n  Enter - zatwierdz podswietlona opcje\n\nSterowanie:\n  Arrow Right - ruch w prawo\n  Arrow Left - ruch w lewo\n  Space - strzal\n  Escape - wyjscie z gry");
 		text.setCharacterSize(20);
 		text.setPosition(100,200);
 	}
