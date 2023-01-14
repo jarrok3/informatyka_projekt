@@ -11,6 +11,10 @@ private:
 	sf::VideoMode videomode;
 	sf::Event ev;
 
+	int points;
+	float timer;
+	float maxTimer;
+
 	void initvar();
 	void initWindow();
 
@@ -31,7 +35,10 @@ private:
 	//koniec obiektu pauza
 
 	//obiekt enemy
+	int maxEnemies;
 	sf::Texture teksturaenem;
+	sf::Vector2f posenem;
+	float speedEnemy;
 	sf::Sprite enemy;
 	void initenem();
 	//koniec obiektu enemy
@@ -51,8 +58,14 @@ public:
 	}
 	//Metody
 	void updatePollEvents();
+	void updateenem();
 	void update();
+
+	void renderenem();
 	void render();
+
+	void moveEnemy();
+
 	const bool isrunning() {
 		return this->window->isOpen();
 	}

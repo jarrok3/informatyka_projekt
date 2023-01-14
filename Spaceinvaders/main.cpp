@@ -103,18 +103,18 @@ int main() {
             }
         }
 
-        // Clear screen
+        // Wyczyœæ okno
         window.clear();
 
-        // Draw the menu background
+        // Narysuj background
         window.draw(background);
 
-        // Draw the menu options
+        // Narysuj opcje menu
         window.draw(playOption);
         window.draw(leaderboardOption);
         window.draw(exitOption);
 
-        // Highlight the selected option
+        // Podœwietlenie aktualnie wybranej opcji
         if (currentOption == 0)
             playOption.setFillColor(sf::Color::Red);
         else
@@ -130,7 +130,7 @@ int main() {
         else
             exitOption.setFillColor(sf::Color::White);
 
-        // Update the window
+        // Wyœwietl
         window.display();
     }
 

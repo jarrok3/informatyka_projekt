@@ -27,12 +27,20 @@ void Game::initenem() {
 	}
 	this->teksturaenem.loadFromFile("enemy.png");
 	this->enemy.setTexture(teksturaenem);
-	this->enemy.scale(0.3f, 0.3f);
-	this->enemy.setPosition(15, 10);
+	this->enemy.scale(0.1f, 0.1f); //60x60 to nowy rozmiar
+	this->posenem.x = 20.f;
+	this->posenem.y = 20.f;
+	this->enemy.setPosition(this->posenem);
 }
 
 void Game::initvar() {
 	this->window = nullptr; //zainicjowanie pustego wskaŸnika window (nadanie wartoœci NULL)
+
+	this->points = 0;
+	this->timer = 0.f;
+	this->maxTimer = 1000.f;
+	this->maxEnemies = 10;
+	this->speedEnemy = 10.f;
 }
 
 void Game::initWindow() {
@@ -58,6 +66,9 @@ void Game::update() {
 	//Obs³uga aktualizowania okna (zale¿nie od wydarzeñ)
 	this->updatePollEvents();
 
+	this->updateenem();
+
+
 	//std::cout << "Mouse pos: " << sf::Mouse::getPosition(*this->window).x <<" " <<sf::Mouse::getPosition(*this->window).y <<"\n";
 }
 
@@ -79,13 +90,38 @@ void Game::updatePollEvents() {
 	}
 }
 
+void Game::updateenem()
+{
+	//Updatuje timer dla ruchu enemies
+	if (this->timer >= this->maxTimer)
+	{
+		this->timer = 0.f;
+		this->moveEnemy();
+	}
+	else
+		this->timer += 250.f;
+	std::cout << this->timer << " timer \n";
+}
+
+void Game::moveEnemy()
+{
+	this->posenem.x += this->speedEnemy;
+	this->enemy.setPosition(this->posenem);
+}
+
+void Game::renderenem()
+{
+	this->window->draw(enemy);
+}
+
 //rendering okna - wyswietlanie obiektów klatka po klatce
 void Game::render() {
 	this->window->clear(); //Czyszczenie okna
 	this->window->draw(this->backgr);
 	this->window->draw(this->player);
 	this->window->draw(this->pauza);
-	this->window->draw(this->enemy);
+	this->renderenem();
 	this->window->display(); //Wyœwietlenie okna
 }
+
 //koniec klasy Game
