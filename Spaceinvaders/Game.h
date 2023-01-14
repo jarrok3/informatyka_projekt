@@ -40,6 +40,7 @@ private:
 	sf::Vector2f posenem;
 	float speedEnemy;
 	sf::Sprite enemy;
+	int direction;
 	void initenem();
 	//koniec obiektu enemy
 public:

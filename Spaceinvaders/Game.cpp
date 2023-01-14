@@ -41,6 +41,7 @@ void Game::initvar() {
 	this->maxTimer = 1000.f;
 	this->maxEnemies = 10;
 	this->speedEnemy = 10.f;
+	this->direction = 1;
 }
 
 void Game::initWindow() {
@@ -105,7 +106,17 @@ void Game::updateenem()
 
 void Game::moveEnemy()
 {
-	this->posenem.x += this->speedEnemy;
+	if (this->enemy.getPosition().x < 0) 
+	{
+		this->direction = 1;
+		this->posenem.y += 25;
+	}
+	else if (this->enemy.getPosition().x > this->videomode.width - 60)
+	{
+		this->direction = -1;
+		this->posenem.y += 25;
+	}
+	this->posenem.x += this->speedEnemy * this->direction;
 	this->enemy.setPosition(this->posenem);
 }
 
