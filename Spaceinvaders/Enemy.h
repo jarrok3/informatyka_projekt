@@ -6,9 +6,9 @@
 class Enemy
 {
 private:
-	float speed;
-public:
 	
+public:
+	float speed;
 	sf::Vector2f position;
 	sf::Sprite enemySprite;
 	sf::Texture *texture;

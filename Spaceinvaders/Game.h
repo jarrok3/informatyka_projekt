@@ -5,6 +5,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include "Enemy.h"
+#include "spaceship.h"
+#include "Bullet.h"
 
 class Game
 {
@@ -26,10 +28,10 @@ private:
 	sf::Texture backgrTexture;
 	void initbackground();
 
-	//objekt statku gracza
-	sf::Texture teksturagr;
-	sf::Sprite player;
+	//obiekt statku gracza
 	void initgracz();
+	sf::Texture playerText;
+	//spaceship player();
 	//koniec obiektu statku gracza
 
 	//Enemy w klasie game
@@ -38,6 +40,13 @@ private:
 	void initenem();
 	void bounce(std::vector<Enemy> &enemies);
 	
+	
+
+	//Bullet w klasie game
+	std::vector<Bullet> bullets;
+	sf::Texture bulletTexture;
+	void initbullets();
+
 	//Tekst pomocny
 	sf::Text helpInGame;
 	sf::Font font;
@@ -49,6 +58,7 @@ public:
 		this->initgracz();
 		this->initenem();
 		this->initbackground();
+		this->initbullets();
 	}
 	//Destruktor - czyszczenie pamiêci po ka¿dej klatce
 	virtual ~Game() {
@@ -63,6 +73,12 @@ public:
 	void render();
 
 	void moveEnemy();
+
+	void updatePlayer();
+	void renderPlayer();
+
+	void isshooting();
+	void renderbullet();
 
 	const bool isrunning() {
 		return this->window->isOpen();

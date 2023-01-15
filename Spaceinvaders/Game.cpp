@@ -1,16 +1,6 @@
 #include "Game.h"
 #include "help.h"
-
-void Game::initgracz() {
-	if (!teksturagr.loadFromFile("player.png")) {
-		std::cout << "Failed to load player image";
-		return;
-	}
-	this->teksturagr.loadFromFile("player.png");
-	this->player.setTexture(teksturagr);
-	this->player.scale(0.2f, 0.2f);
-	this->player.setPosition(this->videomode.width / 2, 500);
-}
+#include "spaceship.h"
 
 void Game::initenem() {
 	this->enemyText.loadFromFile("enemy.png");
@@ -22,7 +12,9 @@ void Game::initenem() {
 	}
 }
 
-
+void Game::initgracz() {
+	this->playerText.loadFromFile("player.png");
+}
 
 void Game::initvar() {
 	this->window = nullptr; //zainicjowanie pustego wskaŸnika window (nadanie wartoœci NULL)
@@ -64,7 +56,10 @@ void Game::update() {
 
 	this->updateenem();
 
+	this->updatePlayer();
+	this->isshooting();
 
+	
 	//std::cout << "Mouse pos: " << sf::Mouse::getPosition(*this->window).x <<" " <<sf::Mouse::getPosition(*this->window).y <<"\n";
 }
 
@@ -113,6 +108,11 @@ void Game::bounce(std::vector<Enemy>& enemies)
 	}
 }
 
+void Game::initbullets()
+{
+	this->bulletTexture.loadFromFile("bullet.png");
+}
+
 void Game::updateenem()
 {
 	//Updatuje timer dla ruchu enemies
@@ -139,10 +139,38 @@ void Game::renderenem()
 void Game::render() {
 	this->window->clear(); //Czyszczenie okna
 	this->window->draw(this->backgr);
-	this->window->draw(this->player);
+	//this->window->draw(this->player);
 	this->window->draw(this->helpInGame);
 	this->renderenem();
+	this->renderbullet();
+
+	this->renderPlayer();
+
 	this->window->display(); //Wyœwietlenie okna
+}
+
+void Game::updatePlayer()
+{
+
+}
+
+void Game::renderPlayer()
+{
+	
+}
+
+void Game::renderbullet() {
+	for (size_t i = 0; i < bullets.size(); i++) {
+		this->window->draw(bullets[i].bulletSprite);
+		std::cout << "Bullet shot\n";
+	}
+}
+
+void Game::isshooting()
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		bullets.push_back(Bullet(&bulletTexture));
+	}
 }
 
 //koniec klasy Game
