@@ -46,7 +46,6 @@ int main() {
 
 	int currentOption = 0;
 
-
     while (window.isOpen())
     {
         // Obs³uga eventów

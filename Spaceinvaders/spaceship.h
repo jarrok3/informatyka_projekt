@@ -2,25 +2,32 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 
 
 class spaceship
 {
 private:
-	friend class Game;
-	sf::Texture *playerText;
+	sf::Texture playerText;
 	sf::Sprite playerSprite;
+	
 	int speed;
+	int hp;
+	int hpMax;
+
+	void initText();
+	void initSprite();
+	void initVar();
 public:
 	sf::Vector2f position;
-	spaceship(sf::Texture* texture, sf::Vector2f pos) 
+	spaceship() 
 	{
-		this->playerText = texture;
-		this->playerSprite.setTexture(*playerText);
-		position = pos;
-		this->playerSprite.setScale(0.1f, 0.1f);
-		this->playerSprite.setPosition(pos);
-		this->speed = 0.5f;
+		this->initVar();
+		this->initText();
+		this->initSprite();
 	}
+	virtual ~spaceship();
+
 };
 

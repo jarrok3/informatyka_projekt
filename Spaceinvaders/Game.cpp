@@ -7,13 +7,20 @@ void Game::initenem() {
 	for (int i = 0; i < 5; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			enemies.push_back(Enemy(&enemyText, sf::Vector2f(10.f + 100 * i, 60.f + 75 * j)));
+			this->enemies.push_back(new Enemy(&enemyText, sf::Vector2f(10.f + 100 * i, 60.f + 75 * j)));
 		}
 	}
+	this->enemySpeed = 0.5f;
 }
 
 void Game::initgracz() {
 	this->playerText.loadFromFile("player.png");
+	this->playerSprite.setTexture(this->playerText);
+	this->playerSprite.setScale(0.2f, 0.2f);
+	this->playerPosition.x = 350.f;
+	this->playerPosition.y = 500.f;
+	this->playerSprite.setPosition(this->playerPosition);
+	this->playerSpeed = 5;
 }
 
 void Game::initvar() {
@@ -22,7 +29,9 @@ void Game::initvar() {
 	this->points = 0;
 	this->timer = 0.f;
 	this->maxTimer = 1000.f;
-	this->directione = 1;
+	this->directione.x = 1.f;
+	this->directione.y = 0.f;
+	this->shotCooldown = 0; 
 }
 
 void Game::initWindow() {
@@ -37,7 +46,7 @@ void Game::initWindow() {
 	this->helpInGame.setCharacterSize(14);
 	this->helpInGame.setPosition(10, 5);
 	this->helpInGame.setFont(this->font);
-	this->helpInGame.setString("F1 - How To Play");
+	this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " +std::to_string(this->points));
 }
 void Game::initbackground()
 {
@@ -47,6 +56,11 @@ void Game::initbackground()
 	}
 	this->backgrTexture.loadFromFile("background.png");
 	this->backgr.setTexture(backgrTexture);
+}
+
+void Game::initbullets()
+{
+	this->bulletTexture.loadFromFile("bullet.png");
 }
 //end private metody
 
@@ -59,8 +73,47 @@ void Game::update() {
 	this->updatePlayer();
 	this->isshooting();
 
+	this->updateBullets();
+
+	this->updateCollision();
+}
+
+
+void Game::updateBullets()
+{
+	unsigned counter = 0;
+	for (auto* bullet : this->bullets) {
+		bullet->moveBullet();
+		if (bullet->getBounds().top + bullet->getBounds().height < 0.f)
+		{
+			delete this->bullets.at(counter);
+			this->bullets.erase(this->bullets.begin() + counter);
+			std::cout << "updateBullets :: I HIT THE TOP - GOODBYE\n";
+		}
+		counter++;
+	}
+}
+
+void Game::updateCollision()
+{
 	
-	//std::cout << "Mouse pos: " << sf::Mouse::getPosition(*this->window).x <<" " <<sf::Mouse::getPosition(*this->window).y <<"\n";
+	for (int i = 0; i< this->enemies.size(); i++) {
+		bool enemy_killed = false;
+		for (int k = 0; k < this->bullets.size() && enemy_killed == false; k++) {
+			if (this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds())) {
+				std::cout << bullets.size() << "BULLETS\n";
+				delete this->bullets[k];
+				this->bullets.erase(this->bullets.begin() + k);
+				std::cout << bullets.size() << "BULLETS AFTER HIT\n";
+				this->points += 1;
+				this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " + std::to_string(this->points));
+				delete this->enemies[i];
+				this->enemies.erase(this->enemies.begin() + i);
+				std::cout << enemies.size() << "ENEMIES\n";
+				enemy_killed = true;
+			}	
+		}
+	}
 }
 
 void Game::updatePollEvents() {
@@ -95,43 +148,53 @@ void Game::updatePollEvents() {
 	}
 }
 
-void Game::bounce(std::vector<Enemy>& enemies)
+void Game::bounce()
 {
-	for (auto& enemy : enemies) {
-		enemy.moveEnemy(&directione);
-		if (enemy.enemySprite.getPosition().x < 0 || enemy.enemySprite.getPosition().x >740) {
-			for (auto& enemy : enemies) {
-				enemy.position.y += 15;
+	for (auto* enemy : this->enemies) {
+		enemy->moveEnemy(this->directione, this->enemySpeed);
+		if (enemy->enemySprite.getPosition().x < 0 || enemy->enemySprite.getPosition().x >740) {
+			for (auto* enemy : this->enemies) {
+				enemy->enemySprite.move(0.f, 15.f);
 			}
-			this->directione *= -1;
+			this->directione.x *= -1;
+			std::cout << "bounce :: BOUNCED \n";
 		}
 	}
 }
 
-void Game::initbullets()
+void Game::updatePlayer()
 {
-	this->bulletTexture.loadFromFile("bullet.png");
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && this->playerPosition.x<730) {
+		this->playerPosition.x += this->playerSpeed;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && this->playerPosition.x>=0) {
+		this->playerPosition.x -= this->playerSpeed;
+	}
+	this->playerSprite.setPosition(this->playerPosition);
 }
 
 void Game::updateenem()
 {
 	//Updatuje timer dla ruchu enemies
-	if (this->timer >= this->maxTimer)
-	{
-		this->timer = 0.f;
+	
+	//if (this->timer >= this->maxTimer)
+	//{
+		//this->timer = 0.f;
 		for (size_t i = 0; i < enemies.size(); i++) {
-			this->bounce(enemies);
+			this->bounce();
 		}
-	}
-	else
-		this->timer += 250.f;
-	std::cout << this->timer << " timer \n";
+	//}
+	//else
+		//this->timer += 250.f;
+	//std::cout << this->timer << " timer \n";
+	
 }
 
 void Game::renderenem()
 {
-	for (size_t i = 0; i < enemies.size(); i++) {
-		this->window->draw(enemies[i].enemySprite);
+	for (auto* enemy : this->enemies)
+	{
+		enemy->renderEnemy(*this->window);
 	}
 }
 
@@ -139,37 +202,38 @@ void Game::renderenem()
 void Game::render() {
 	this->window->clear(); //Czyszczenie okna
 	this->window->draw(this->backgr);
-	//this->window->draw(this->player);
 	this->window->draw(this->helpInGame);
 	this->renderenem();
 	this->renderbullet();
-
 	this->renderPlayer();
 
 	this->window->display(); //Wyœwietlenie okna
-}
+ }
 
-void Game::updatePlayer()
-{
 
-}
 
 void Game::renderPlayer()
 {
-	
+	this->window->draw(this->playerSprite);
 }
 
 void Game::renderbullet() {
-	for (size_t i = 0; i < bullets.size(); i++) {
-		this->window->draw(bullets[i].bulletSprite);
-		std::cout << "Bullet shot\n";
+	for (auto* bullet : this->bullets) {
+		bullet->renderBullet(this->window);
 	}
 }
 
 void Game::isshooting()
 {
+	if (this->shotCooldown > 0) {
+		this->shotCooldown -= 10.f;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		bullets.push_back(Bullet(&bulletTexture));
+		if (this->shotCooldown == 0.f) {
+			this -> bullets.push_back(new Bullet(&bulletTexture, sf::Vector2f(this->playerPosition.x + 12.f, this->playerPosition.y - 25)));0;
+			this->shotCooldown = 500.f;
+			std::cout << "isshooting :: BULLET SHOT\n";
+		}
 	}
 }
 

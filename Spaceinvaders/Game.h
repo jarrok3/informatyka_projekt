@@ -18,7 +18,9 @@ private:
 	int points;
 	float timer;
 	float maxTimer;
-	int directione;
+	sf::Vector2f directione;
+
+	float enemySpeed;
 
 	void initvar();
 	void initWindow();
@@ -31,19 +33,23 @@ private:
 	//obiekt statku gracza
 	void initgracz();
 	sf::Texture playerText;
-	//spaceship player();
+	sf::Sprite playerSprite;
+	sf::Vector2f playerPosition;
+	float shotCooldown;
+	int playerSpeed;
 	//koniec obiektu statku gracza
+
 
 	//Enemy w klasie game
 	sf::Texture enemyText;
-	std::vector<Enemy> enemies;
+	std::vector<Enemy*> enemies;
 	void initenem();
-	void bounce(std::vector<Enemy> &enemies);
+	void bounce();
 	
 	
 
 	//Bullet w klasie game
-	std::vector<Bullet> bullets;
+	std::vector<Bullet*> bullets;
 	sf::Texture bulletTexture;
 	void initbullets();
 
@@ -68,6 +74,8 @@ public:
 	void updatePollEvents();
 	void updateenem();
 	void update();
+	void updateBullets();
+	void updateCollision();
 
 	void renderenem();
 	void render();
