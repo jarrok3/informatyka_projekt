@@ -10,7 +10,7 @@ void Game::initenem() {
 			this->enemies.push_back(new Enemy(&enemyText, sf::Vector2f(10.f + 100 * i, 60.f + 75 * j)));
 		}
 	}
-	this->enemySpeed = 3.f;
+	this->enemySpeed = 3.f * this->level * 0.4;
 }
 
 void Game::initgracz() {
@@ -25,7 +25,7 @@ void Game::initgracz() {
 
 void Game::initvar() {
 	this->window = nullptr; //zainicjowanie pustego wskaŸnika window (nadanie wartoœci NULL)
-
+	this->level = 1;
 	this->points = 0;
 	this->timer = 0.f;
 	this->maxTimer = 1000.f;
@@ -46,7 +46,12 @@ void Game::initWindow() {
 	this->helpInGame.setCharacterSize(14);
 	this->helpInGame.setPosition(10, 5);
 	this->helpInGame.setFont(this->font);
-	this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " +std::to_string(this->points));
+	this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " +std::to_string(this->points) + "\nLevel: " + std::to_string(this->level));
+
+	this->gameWon.setCharacterSize(50);
+	this->gameWon.setPosition(225, 200);
+	this->gameWon.setFont(this->font);
+	this->gameWon.setString("  YOU WIN!\nGAME OVER");
 }
 void Game::initbackground()
 {
@@ -66,18 +71,31 @@ void Game::initbullets()
 
 void Game::update() {
 	//Obs³uga aktualizowania okna (zale¿nie od wydarzeñ)
+	
 	this->updatePollEvents();
+	if (this->updateGameState() == 1) {
 
-	this->updateCollision();
+		this->updateCollision();
 
-	this->updateenem();
-	this->updatePlayer();
-	this->isshooting();
+		this->updateenem();
+		this->updatePlayer();
+		this->isshooting();
 
-	this->updateBullets();
-
+		this->updateBullets();
+	}
 }
 
+int Game::updateGameState() {
+	int state = 1;
+	if (this->enemies.size() <= 0 && this->level == 3) {
+		state = 0;
+	}
+	else if (this->enemies.size() <= 0 && this->level < 3) {
+		this->level++;
+		this->initenem();
+	}
+	return state;
+}
 
 void Game::updateBullets()
 {
@@ -107,7 +125,7 @@ void Game::updateCollision()
 
 				std::cout << bullets.size() << "BULLETS AFTER HIT\n";
 				this->points += 1;
-				this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " + std::to_string(this->points));
+				this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " + std::to_string(this->points) + "\nLevel: " + std::to_string(this->level));
 				
 				delete this->enemies[i];
 				this->enemies.erase(this->enemies.begin() + i);
@@ -189,10 +207,14 @@ void Game::render() {
 	this->window->clear(); //Czyszczenie okna
 	this->window->draw(this->backgr);
 	this->window->draw(this->helpInGame);
-	this->renderenem();
-	this->renderbullet();
-	this->renderPlayer();
-
+	if (this->updateGameState() == 1) {
+		this->renderenem();
+		this->renderbullet();
+		this->renderPlayer();
+	}
+	else if (this->updateGameState() == 0) {
+		this->window->draw(this->gameWon);
+	}
 	this->window->display(); //Wyœwietlenie okna
  }
 

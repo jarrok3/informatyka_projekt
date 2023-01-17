@@ -16,6 +16,7 @@ private:
 	sf::Event ev;
 
 	int points;
+	int level;
 	float timer;
 	float maxTimer;
 	sf::Vector2f directione;
@@ -55,6 +56,7 @@ private:
 	//Tekst pomocny
 	sf::Text helpInGame;
 	sf::Font font;
+	sf::Text gameWon;
 public:
 	//Konstruktor
 	Game() {
@@ -75,6 +77,7 @@ public:
 	void update();
 	void updateBullets();
 	void updateCollision();
+	int updateGameState();
 
 	void renderenem();
 	void render();
