@@ -100,7 +100,7 @@ int main() {
 
                         game.update();
                         //czyszczenie poprzedniej klatki
-
+                        
                         game.render();
                         //Wyœwietlenie okna
                     }

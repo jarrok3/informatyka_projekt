@@ -10,7 +10,7 @@ void Game::initenem() {
 			this->enemies.push_back(new Enemy(&enemyText, sf::Vector2f(10.f + 100 * i, 60.f + 75 * j)));
 		}
 	}
-	this->enemySpeed = 0.5f;
+	this->enemySpeed = 3.f;
 }
 
 void Game::initgracz() {
@@ -68,14 +68,14 @@ void Game::update() {
 	//Obs³uga aktualizowania okna (zale¿nie od wydarzeñ)
 	this->updatePollEvents();
 
-	this->updateenem();
+	this->updateCollision();
 
+	this->updateenem();
 	this->updatePlayer();
 	this->isshooting();
 
 	this->updateBullets();
 
-	this->updateCollision();
 }
 
 
@@ -100,16 +100,19 @@ void Game::updateCollision()
 	for (int i = 0; i< this->enemies.size(); i++) {
 		bool enemy_killed = false;
 		for (int k = 0; k < this->bullets.size() && enemy_killed == false; k++) {
-			if (this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds())) {
+			if (this->enemies[i]->getBounds().intersects(this->bullets[k]->getBounds())) {
 				std::cout << bullets.size() << "BULLETS\n";
 				delete this->bullets[k];
 				this->bullets.erase(this->bullets.begin() + k);
+
 				std::cout << bullets.size() << "BULLETS AFTER HIT\n";
 				this->points += 1;
 				this->helpInGame.setString("F1 - How To Play\nDestroyed Invaders: " + std::to_string(this->points));
+				
 				delete this->enemies[i];
 				this->enemies.erase(this->enemies.begin() + i);
 				std::cout << enemies.size() << "ENEMIES\n";
+
 				enemy_killed = true;
 			}	
 		}
@@ -148,7 +151,7 @@ void Game::updatePollEvents() {
 	}
 }
 
-void Game::bounce()
+void Game::updateenem()
 {
 	for (auto* enemy : this->enemies) {
 		enemy->moveEnemy(this->directione, this->enemySpeed);
@@ -171,23 +174,6 @@ void Game::updatePlayer()
 		this->playerPosition.x -= this->playerSpeed;
 	}
 	this->playerSprite.setPosition(this->playerPosition);
-}
-
-void Game::updateenem()
-{
-	//Updatuje timer dla ruchu enemies
-	
-	//if (this->timer >= this->maxTimer)
-	//{
-		//this->timer = 0.f;
-		for (size_t i = 0; i < enemies.size(); i++) {
-			this->bounce();
-		}
-	//}
-	//else
-		//this->timer += 250.f;
-	//std::cout << this->timer << " timer \n";
-	
 }
 
 void Game::renderenem()

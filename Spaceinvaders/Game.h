@@ -44,7 +44,6 @@ private:
 	sf::Texture enemyText;
 	std::vector<Enemy*> enemies;
 	void initenem();
-	void bounce();
 	
 	
 
